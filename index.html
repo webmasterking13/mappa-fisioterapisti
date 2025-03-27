@@ -85,7 +85,7 @@
         const poly = layer.feature;
         if (turf.booleanPointInPolygon(point, poly)) {
           const name = poly.properties.name;
-          if (name !== "Distretto 4") {  // Escludiamo "Distretto 4"
+          if (name !== "Distretto 4" && name !== "Municipio III (ex IV)") {  // Escludiamo "Distretto 4" e "Municipio III (ex IV)"
             foundNames.push(name);
           }
         }
