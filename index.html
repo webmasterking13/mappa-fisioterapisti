@@ -71,7 +71,7 @@
       const point = turf.point([parseFloat(lon), parseFloat(lat)]);
 
       if (marker) map.removeLayer(marker);
-      marker = L.marker([lat, lon]).addTo(map).bindPopup("Indirizzo cercato").openPopup();
+    marker = L.marker([lat, lon]).addTo(map).bindPopup("Zona coperta da: " + foundNames.join(", ")).openPopup();
       map.setView([lat, lon], 14);
 
       let foundNames = [];
