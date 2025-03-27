@@ -39,11 +39,12 @@
 
     let geojsonLayer;
     let marker;
+    let geojsonData;
 
-    // Carichiamo i poligoni GeoJSON
     fetch("Distretti 4-5-6-7-8-9.json")
       .then(res => res.json())
       .then(data => {
+        geojsonData = data;
         geojsonLayer = L.geoJSON(data, {
           style: feature => ({ color: 'green', fillOpacity: 0.4 }),
           onEachFeature: (feature, layer) => {
@@ -73,17 +74,20 @@
       marker = L.marker([lat, lon]).addTo(map).bindPopup("Indirizzo cercato").openPopup();
       map.setView([lat, lon], 14);
 
-      let found = false;
+      let foundNames = [];
 
       geojsonLayer.eachLayer(layer => {
         const poly = layer.feature;
         if (turf.booleanPointInPolygon(point, poly)) {
-          layer.openPopup();
-          found = true;
+          foundNames.push(poly.properties.name);
         }
       });
 
-      document.getElementById('status').textContent = found ? "Zona coperta." : "Zona NON coperta.";
+      if (foundNames.length > 0) {
+        document.getElementById('status').textContent = "Zona coperta da: " + foundNames.join(", ");
+      } else {
+        document.getElementById('status').textContent = "Zona NON coperta.";
+      }
     }
   </script>
 </body>
