@@ -71,8 +71,6 @@
       const point = turf.point([parseFloat(lon), parseFloat(lat)]);
 
       if (marker) map.removeLayer(marker);
-    marker = L.marker([lat, lon]).addTo(map).bindPopup("Zona coperta da: " + foundNames.join(", ")).openPopup();
-      map.setView([lat, lon], 14);
 
       let foundNames = [];
 
@@ -83,11 +81,14 @@
         }
       });
 
-      if (foundNames.length > 0) {
-        document.getElementById('status').textContent = "Zona coperta da: " + foundNames.join(", ");
-      } else {
-        document.getElementById('status').textContent = "Zona NON coperta.";
-      }
+      const popupText = foundNames.length > 0
+        ? "Zona coperta da: " + foundNames.join(", ")
+        : "Zona NON coperta.";
+
+      marker = L.marker([lat, lon]).addTo(map).bindPopup(popupText).openPopup();
+      map.setView([lat, lon], 14);
+
+      document.getElementById('status').textContent = popupText;
     }
   </script>
 </body>
