@@ -41,12 +41,16 @@
     let marker;
     let geojsonData;
 
-    fetch("Mappa Distretti Fisioterapisti.json")
+    fetch("Mappa Distretti Fiosterapisti.json")
       .then(res => res.json())
       .then(data => {
         geojsonData = data;
         geojsonLayer = L.geoJSON(data, {
-          style: feature => ({ color: 'green', fillOpacity: 0.4 }),
+          style: feature => ({
+            color: 'blue',         // bordo blu
+            fillColor: '#66ccff',  // azzurro chiaro dentro
+            fillOpacity: 0.3
+          }),
           onEachFeature: (feature, layer) => {
             if (feature.properties.name) {
               layer.bindPopup("Fisioterapista: " + feature.properties.name);
@@ -75,15 +79,14 @@
       let foundNames = [];
 
       geojsonLayer.eachLayer(layer => {
-  const poly = layer.feature;
-  if (turf.booleanPointInPolygon(point, poly)) {
-    const name = poly.properties.name;
-    if (name !== "Municipio III (ex IV)") {
-      foundNames.push(name);
-    }
-  }
-});
-
+        const poly = layer.feature;
+        if (turf.booleanPointInPolygon(point, poly)) {
+          const name = poly.properties.name;
+          if (name !== "Municipio III (ex IV)") {
+            foundNames.push(name);
+          }
+        }
+      });
 
       const popupText = foundNames.length > 0
         ? "Zona coperta da: " + foundNames.join(", ")
