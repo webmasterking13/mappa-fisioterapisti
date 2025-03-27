@@ -102,7 +102,7 @@
       document.getElementById('status').textContent = popupText;
     }
 
-    // Disabilitare il popup quando si clicca sulla mappa
+    // Disabilitare il popup quando si clicca sulla mappa, senza visualizzare un fisioterapista
     map.on('click', function() {
       if (marker) {
         map.removeLayer(marker); // Rimuove il marker e il popup
