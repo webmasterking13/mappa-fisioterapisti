@@ -46,11 +46,14 @@
       .then(data => {
         geojsonData = data;
         geojsonLayer = L.geoJSON(data, {
-          style: feature => ({
-            color: 'blue',         // bordo blu
-            fillColor: '#66ccff',  // azzurro chiaro dentro
-            fillOpacity: 0.3
-          }),
+          style: feature => {
+            const name = feature.properties.name;
+            return {
+              color: 'blue',         // bordo blu
+              fillColor: name === 'Distretto 4' ? '#ffcc66' : '#66ccff',  // arancione per Distretto 4, azzurro per gli altri
+              fillOpacity: 0.3
+            };
+          },
           onEachFeature: (feature, layer) => {
             if (feature.properties.name) {
               layer.bindPopup("Fisioterapista: " + feature.properties.name);
@@ -82,7 +85,7 @@
         const poly = layer.feature;
         if (turf.booleanPointInPolygon(point, poly)) {
           const name = poly.properties.name;
-          if (name !== "Municipio III (ex IV)") {
+          if (name !== "Distretto 4") {  // Escludiamo "Distretto 4"
             foundNames.push(name);
           }
         }
