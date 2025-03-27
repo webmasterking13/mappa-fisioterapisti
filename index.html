@@ -86,7 +86,7 @@
         if (turf.booleanPointInPolygon(point, poly)) {
           const name = poly.properties.name;
           // Escludiamo "Distretto 4" e "Municipio III (ex IV)" dai risultati
-          if (name !== "Distretto 4" && name !== "Municipio III (ex IV)") {
+          if (name !== "Distretto 4" && name !== "Distretto IV" && name !== "Municipio III (ex IV)") {
             foundNames.push(name);
           }
         }
