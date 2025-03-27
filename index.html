@@ -50,8 +50,8 @@
             const name = feature.properties.name;
             return {
               color: 'blue',         // bordo blu
-              fillColor: name === 'Distretto 4' ? '#ffcc66' : '#66ccff',  // arancione per Distretto 4, azzurro per gli altri
-              fillOpacity: 0.3
+              fillColor: name === 'Distretto 4' ? '#ffcc66' : 'transparent',  // arancione per Distretto 4, invisibile per gli altri
+              fillOpacity: name === 'Distretto 4' ? 0.3 : 0,  // opacità solo per Distretto 4
             };
           },
           onEachFeature: (feature, layer) => {
@@ -85,7 +85,8 @@
         const poly = layer.feature;
         if (turf.booleanPointInPolygon(point, poly)) {
           const name = poly.properties.name;
-          if (name !== "Distretto 4" && name !== "Municipio III (ex IV)") {  // Escludiamo "Distretto 4" e "Municipio III (ex IV)"
+          // Escludiamo "Distretto 4" e "Municipio III (ex IV)" dai risultati
+          if (name !== "Distretto 4" && name !== "Municipio III (ex IV)") {
             foundNames.push(name);
           }
         }
