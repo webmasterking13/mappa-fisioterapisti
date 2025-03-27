@@ -75,11 +75,15 @@
       let foundNames = [];
 
       geojsonLayer.eachLayer(layer => {
-        const poly = layer.feature;
-        if (turf.booleanPointInPolygon(point, poly)) {
-          foundNames.push(poly.properties.name);
-        }
-      });
+  const poly = layer.feature;
+  if (turf.booleanPointInPolygon(point, poly)) {
+    const name = poly.properties.name;
+    if (name !== "Municipio III (ex IV)") {
+      foundNames.push(name);
+    }
+  }
+});
+
 
       const popupText = foundNames.length > 0
         ? "Zona coperta da: " + foundNames.join(", ")
