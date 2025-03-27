@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Verifica copertura fisioterapisti</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+  <style>
+    #map { height: 90vh; }
+    body { font-family: sans-serif; margin: 0; padding: 0; }
+    #searchBox {
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+      background: #f9f9f9;
+      border-bottom: 1px solid #ccc;
+    }
+    input, button {
+      padding: 8px;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+  <div id="searchBox">
+    <input type="text" id="addressInput" placeholder="Inserisci un indirizzo..." size="50">
+    <button onclick="geocodeAddress()">Cerca</button>
+    <span id="status"></span>
+  </div>
+  <div id="map"></div>
+
+  <script>
+    const map = L.map('map').setView([41.9, 12.5], 11);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    let geojsonLayer;
+    let marker;
+
+    // Carichiamo i poligoni GeoJSON
+    fetch("Distretti 4-5-6-7-8-9.json")
+      .then(res => res.json())
+      .then(data => {
+        geojsonLayer = L.geoJSON(data, {
+          style: feature => ({ color: 'green', fillOpacity: 0.4 }),
+          onEachFeature: (feature, layer) => {
+            if (feature.properties.name) {
+              layer.bindPopup("Fisioterapista: " + feature.properties.name);
+            }
+          }
+        }).addTo(map);
+      });
+
+    async function geocodeAddress() {
+      const address = document.getElementById('addressInput').value;
+      if (!address) return;
+
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
+      const data = await res.json();
+
+      if (data.length === 0) {
+        document.getElementById('status').textContent = "Indirizzo non trovato.";
+        return;
+      }
+
+      const { lat, lon } = data[0];
+      const point = turf.point([parseFloat(lon), parseFloat(lat)]);
+
+      if (marker) map.removeLayer(marker);
+      marker = L.marker([lat, lon]).addTo(map).bindPopup("Indirizzo cercato").openPopup();
+      map.setView([lat, lon], 14);
+
+      let found = false;
+
+      geojsonLayer.eachLayer(layer => {
+        const poly = layer.feature;
+        if (turf.booleanPointInPolygon(point, poly)) {
+          layer.openPopup();
+          found = true;
+        }
+      });
+
+      document.getElementById('status').textContent = found ? "Zona coperta." : "Zona NON coperta.";
+    }
+  </script>
+</body>
+</html>
